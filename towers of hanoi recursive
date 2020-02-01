@@ -1,0 +1,23 @@
+#include <iostream>
+using namespace std;
+
+void move(char from, char to, char extra, int n){
+	    if(n == 1) {
+			cout << "Move ring " << n << " from "<< from << " to " << to << "\n";
+			return;
+		}
+ 		else {
+		move(from, extra, to, n-1);
+		cout << "Move ring " << n << " from "<< from << " to " << to << "\n";
+ 		move(extra, to, from, n-1);
+ 		}
+	}
+
+int main() {
+    int n;
+    cout << "enter number of rings ";
+    cin >> n;
+    cout << "\n";
+    move('A', 'B', 'C', n);
+    return 0;
+}
