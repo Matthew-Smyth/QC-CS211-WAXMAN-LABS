@@ -1,0 +1,191 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+ 
+class Rat {
+    private:
+        int n;
+        int d;
+ 
+    public:
+        // constructors
+ 
+        // default constructor
+        Rat() {
+            n = 0;
+            d = 1;
+        }
+ 
+        // 2 parameter constructor
+        Rat(int i, int j) {
+            n = i;
+            d = j;
+        }
+ 
+        // conversion constructor
+        Rat(int i) {
+            n = i;
+            d = 1;
+        }
+ 
+        //accessor functions (usually called get() and set(...) )
+        int getN() { 
+            return n; 
+        }
+        
+        int getD() { 
+            return d; 
+        }
+ 
+        void setN(int i) { 
+            n = i; 
+        }
+ 
+        void setD(int i) { 
+            d = i; 
+        }
+ 
+        // operator+ (redefine the operator '+' for Rat objects)
+        Rat operator+(Rat r) {
+            Rat t;
+            t.n = n * r.d + d * r.n;
+            t.d = d * r.d;
+            t.reduce();
+            return t;
+        }
+ 
+        // other 3 operators (operator-, operator*, operator/).
+        Rat operator- (Rat r) {
+            // ...
+            Rat t;
+            t.n = n * r.d - d * r.n;
+            t.d = d * r.d;
+            t.reduce();
+            return t;
+        }
+ 
+        // for operator* ...
+        Rat operator* (Rat r){
+            Rat t;
+            t.n = n * r.n;
+            t.d = d * r.d;
+            t.reduce();
+            return t;
+		}
+        
+        // for operator/ ...
+        Rat operator/ (Rat r){
+            Rat t;
+            t.n = n * r.d;
+            t.d = d * r.n;
+            t.reduce();
+            return t;
+		}
+ 
+        // The GCD (Euclid's algorithm) finds the largest common divisor
+        int gcd(int n, int d) {
+            return d == 0 ? n : gcd(d, n%d);
+        }
+        
+        
+        // Write a function to reduce the Rat to lowest terms.
+        // 1. Use the GCD function provided above to find the greatest common divisor
+        // 2. divide both n and d by the number found in step 1
+        // 3. also double check if denominator is negative, if so, add negative sign to both n and d
+        Rat reduce(){
+        	int divisor = gcd(n, d);
+        	n = n/divisor;
+        	d = d/divisor;
+        	if(d < 0){
+        		n = n * (-1);
+				d *= -1;
+			}
+		}
+ 
+        // 2 overloaded i/o operators
+        friend ostream& operator<<(ostream& os, Rat r);
+        friend istream& operator>>(istream& is, Rat& r);
+}; //end Rat
+ 
+// operator<<() is NOT a member function but since it was declared a friend of Rat
+// it has access to its private parts n and d.
+ostream& operator<<(ostream& os, Rat r) {
+    // Rewrite this function so that improper fractions are printed as mixed numbers.  For example:
+    // 3/2 should be printed as 1 1/2
+    // 1/2 should be printed as 1/2
+    // 2/1 should be printed as 2
+    // 0/1 should be printed as 0
+    // Negative numbers should be printed the same way, but beginning with a minus sign
+ 
+    // Step 1 : reduce r
+    // Step 2 : if n >= d (numerator > denominator)
+            // find n%d (mod) and n/d (div) of r
+            // (e.g. 4/2) if mod is 0 (numerator is divisible by denominator), simply print div
+            // (e.g. 3/2) else print div , then mod , then d   
+    // Step 3 : else (numerator < denominator)
+            // (e.g. 0/1) if n is 0 simply print 0
+            // (e.g. 1/2) else print n then d
+    r.reduce();
+    int mod = r.n % r.d;
+    int div = r.n / r.d;
+    if(r.n < 0){
+    	div = div * -1;
+	}
+    
+    if(abs(r.n) >= abs(r.d)) {
+    	if(r.n % r.d){
+    		if(r.n< 0) os << -div << " " << -mod << "/" << r.d;
+			else os << div << " " << mod << "/" << r.d;
+		} else {
+			os << div;
+		} 
+	}
+	if(abs(r.n) < abs(r.d)){
+			if (r.n == 0) {
+				os << r.n;
+			} else{
+				os << r.n << "/" << r.d;
+			}
+	}
+    return os;
+}
+ 
+istream& operator>>(istream& is, Rat& r) {
+    is >> r.n >> r.d;
+    return is;
+}
+ 
+int main() {
+    Rat r1(5, 2), r2(3, 2);
+
+    cout << "r1: " << r1 << endl;
+    cout << "r2: " << r2 << endl;
+    cout << "r1 + r2: " << r1 + r2 << endl;
+    cout << "r1 - r2: " << r1 - r2 << endl;
+    cout << "r1 * r2: " << r1 * r2 << endl;
+    cout << "r1 / r2: " << r1 / r2 << endl;
+    cout << endl;
+ 
+    r1 = r2;
+    r2 = r1 * r2;
+ 
+    cout << "r1: " << r1 << endl;
+    cout << "r2: " << r2 << endl;
+    cout << "r1 + r2: " << r1 + r2 << endl;
+    cout << "r1 - r2: " << r1 - r2 << endl;
+    cout << "r1 * r2: " << r1 * r2 << endl;
+    cout << "r1 / r2: " << r1 / r2 << endl;
+    cout << endl;
+ 
+    r1 = r2 + r1 * r2 / r1;
+    r2 = r2 + r1 * r2 / r1;
+ 
+    cout << "r1: " << r1 << endl;
+    cout << "r2: " << r2 << endl;
+    cout << "r1 + r2: " << r1 + r2 << endl;
+    cout << "r1 - r2: " << r1 - r2 << endl;
+    cout << "r1 * r2: " << r1 * r2 << endl;
+    cout << "r1 / r2: " << r1 / r2 << endl;
+ 
+    return 0;
+}
