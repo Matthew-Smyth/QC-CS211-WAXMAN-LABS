@@ -1,0 +1,99 @@
+#include <iostream>
+using namespace std;
+
+string add(string a, string b) {
+	// create string variables result, big, small
+	string result = "";
+	string big = "";
+	string small = "";
+	// compare the length of a and b
+	if(a.length() >= b.length()) {
+		small = b;
+		big = a;
+	}
+	else {
+		small = a;
+		big = b;
+	}
+	// if a is longer
+		// assign a to big, b to small
+		// concat '0's to the beginning of small so that length of big and small would be the same
+		//
+		int size = big.length() - small.length();
+		
+		
+	for (int i = 0; i < size; i++) {
+		small = '0' + small; 
+	}
+	//cout<<endl<<small<<" and "<<big<<endl;
+	// else 
+		// ... similarly
+		
+		//cout << big << endl;
+	//cout << small << endl;
+	
+				
+	// loop backward from the last index to index 0 of either big or small
+	for (int i = big.length() - 1; i >= 0; i--) {
+		
+		int value = (big[i] - 48 ) + (small[i] - 48 );
+	
+		//cout << big[i] << " " << small[i] << " | " << value << endl;
+		if (value < 10) {
+			char bubba = value + 48;
+			result = bubba + result;
+		}
+		else {
+			value = value % 10;
+			char bubba = value + 48;
+			result = bubba + result;
+			if (i == 0) {
+				result = '1' + result;
+			}
+			else {
+				big[i-1] = (char)(big[i-1] + 1);
+			}
+		}
+		//48 49 50 51 52 53 54 55 56 57 58
+	} 
+	return result;
+		// int value = (big[i] - ?) + (small[i] - ?) ;
+		// (each of them are char, if you do arithmetic calculation they become ASCII, e.g. '0' is 48, '1' is '49', so you should make the shift) 
+		// if value < 10, simply concat the value to result. (don't forget to shift ASCII and type-cast back to char before you concat)
+		// else,
+			// concat the right digit to the result.
+			// if i is 0 now, concat a '1' to result
+			// if not, add 1 to the value of previous index of either big or small
+
+    // return ...;
+}
+
+
+int main() {
+    // add this three lines to your main to double check if your function works first
+    cout << add("2345566777844567",       "9999988777765768009998") << endl; // 9999991123332545854565
+    cout << add("9999988777765768009998", "9999988777765768009998") << endl; // 19999977555531536019996
+    cout << add("2345566777844567",       "745566777844567") << endl; // 3091133555689134
+
+	// declare variables and write your loop
+	string a;
+	string b;
+	
+	while (true) {
+		cout << "pick a large integer"<< endl;
+		cin >> a;
+		if (a == "done") return 0;
+		//limits string max of 100 chars
+		a = a.substr(0, 100);
+		cout << "pick a second large integer" << endl;
+		cin >> b;
+		//limits string max of 100 chars
+		b = b.substr(0, 100);
+		cout << "added together equals " << endl;
+		//prints result
+		cout << add(a, b)<< endl;
+	
+    cout << "End of Program." << endl;
+    return 0;
+}
+}
