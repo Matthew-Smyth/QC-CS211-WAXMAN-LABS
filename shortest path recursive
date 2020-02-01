@@ -1,0 +1,88 @@
+#include <iostream>
+#include <string>
+using namespace std;
+ 
+const int rols = 5, cols = 6;
+string path[rols][cols]; // each stores a string of row numbers to the target square.
+ 
+// Returns the cost of the shortest path from left to any target square with row i, column j.
+int calculateCost(int i, int j) {
+    // Given a weight matrix.
+    static int weight[rols][cols] = { {3,4,1,2,8,6},
+                                      {6,1,8,2,7,4},
+                                      {5,9,3,9,9,5},
+                                      {8,4,1,3,2,6},
+                                      {3,7,2,8,6,4} };
+ 
+    // Initialize the cost matrix.
+    // ...
+    static int cost[rols][cols];
+ 
+    // If the cost has already been calculated (not 0), simply return.
+    // ...
+    if(cost[i][j] != 0)
+    return cost[i][j];
+ 
+    // Check for the base case: the first column.
+    if (j == 0) {
+        cost[i][j] = weight[i][0];
+        path[i][j] = to_string(i);
+        return cost[i][j];
+    }
+ 
+    // Calculate the costs of 3 adjacent squares (up, left, down) by calling the function recursively.
+    int left = calculateCost(i, j-1); 
+    // ... // be careful for up, you don't want to get a negative number, so simply + rols
+    // ...
+    int up = calculateCost((i-1+5)%5, j-1);
+    int down = calculateCost((i+1)%5, j-1);
+    
+    // Find the minimum of the 3 above adjacent squares (up, left, down).
+    int minCost = min(min(left, up), down);
+ 
+    // Update the cost matrix:
+    // cost[i][j] = adding the weight of target square itself and the min adj square's cost
+    cost[i][j] = weight[i][j] + minCost; 
+ 
+    // Update the path matrix:
+    // If left is the min cost, get the path to that square from the path matrix and concatenate it with the current row.   
+    if(minCost == left) path[i][j] = path[i][j - 1] + to_string(i);
+    // ... // if up is the min cost...
+    if(minCost == up) path[i][j] = path[(i-1+5)%5][j - 1] + to_string(i);
+    // ... // if down is the min cost...
+    if(minCost == down) path[i][j] = path[(i+1)%5][j - 1] + to_string(i);
+ 
+    return cost[i][j]; 
+}
+ 
+ 
+ 
+ 
+ 
+int main() {
+    // set the min as the first row of the last column.
+    int minRow = 0;
+    int minCost = calculateCost(0, cols-1);
+ 
+    // loop through all the remaining rows of the last column
+    // everytime call the calculateCost function and replace the min rows and values
+    // ......
+    for(int i = 1; i < rols; i++){
+    	if(calculateCost(i, cols-1) < minCost){
+    	minCost = calculateCost(i, cols-1);
+    	minRow = i;
+    }
+}
+ 
+    cout << "The length of the shortest path is " << minCost;
+    cout << ".\nThe rows of the path from left to right are " << path[minRow][cols-1] << ".";
+    // cout << endl << calculateCost(0, cols-1) << endl;
+    // cout << calculateCost(1, cols-1) << endl;
+    // cout << calculateCost(2, cols-1) << endl;
+    // cout << calculateCost(3, cols-1) << endl;
+    // cout << calculateCost(4, cols-1) << endl;
+    return 0;
+}
+ 
+
+
